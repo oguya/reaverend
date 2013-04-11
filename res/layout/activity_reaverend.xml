@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ReaverendActivity" >
+    
+    <!-- gmaps v2-->
+	
+   	<!-- <fragment
+   	    class="com.google.android.gms.maps.SupportMapFragment"
+   	    xmlns:map="http://schemas.android.com/apk/res-auto"
+   	    android:id="@+id/Gmap"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="wrap_content"
+   	    android:layout_alignParentTop="true"
+   	    map:uiCompass="false"
+   	    map:uiRotateGestures="true"
+   	    map:uiScrollGestures="true"
+   	    map:uiTiltGestures="true"
+   	    map:uiZoomControls="false"
+   	    map:uiZoomGestures="true"
+   	    map:cameraTargetLat="-1.28333"
+   	    map:cameraTargetLng="36.81667"
+   	    tools:ignore="MissingPrefix" />
+	 -->
+	 
+</RelativeLayout>

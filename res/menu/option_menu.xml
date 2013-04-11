@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/ic_nearby"
+        android:icon="@drawable/ic_gps"
+        android:title="NightClubs Nearby"/>
+    
+    <item android:id="@+id/ic_district"
+        android:icon="@drawable/ic_map"
+        android:title="Wide Area" />
+    
+    <item android:id="@+id/ic_settings"
+        android:icon="@drawable/ic_satellite"
+        android:title="Settings" />
+
+</menu>
