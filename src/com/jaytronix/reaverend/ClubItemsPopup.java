@@ -1,8 +1,11 @@
 package com.jaytronix.reaverend;
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -21,12 +24,14 @@ public class ClubItemsPopup extends ListActivity implements OnItemClickListener{
 	private String APP_LOG_TAG = "ClubItemsPopup";
 	
 	//intent...receive data from previous activity
-	Intent previousActivity = getIntent();
+	Intent previousActivity;
 	
 	//received data from previous intent
 	public String CLUB_NAME = "";
 	public double CLUB_LAT = 0.00;
 	public double CLUB_LONG = 0.00;
+	
+
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -36,6 +41,9 @@ public class ClubItemsPopup extends ListActivity implements OnItemClickListener{
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		
 		setContentView(R.layout.activity_clubitemspopup);
+		
+		//get previous intent
+		previousActivity = getIntent();
 		
 		//data from previous intents
 		CLUB_NAME = previousActivity.getStringExtra("CLUB_NAME");
@@ -70,7 +78,10 @@ public class ClubItemsPopup extends ListActivity implements OnItemClickListener{
 			
 			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
 			//--add payload to the intent...
+			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
 			nextActivity.putExtra("ITEM_NAME", "Beer");
+			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
+			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
 			startActivity(nextActivity);
 			
 		}else if(listItems[position].equalsIgnoreCase("Wines")){

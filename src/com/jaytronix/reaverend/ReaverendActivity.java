@@ -1,10 +1,13 @@
 package com.jaytronix.reaverend;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,10 +20,18 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class ReaverendActivity extends FragmentActivity {
 	
@@ -36,34 +47,21 @@ public class ReaverendActivity extends FragmentActivity {
 	//googleMap handle
 	private GoogleMap gMap;
 	
+	//nbi latlng
+	private LatLng NBICOORDS = new LatLng(-1.28333, 36.81667);
+	
 	//alert dialog mgr
 	AlertDialogManager alertDM = new AlertDialogManager();
 	
-	//google place
-	GooglePlaces googlePlaces;
-	
-	//places list
-	PlacesList nearPlaces;
-	
-	//GPS location
-	GPSTracker gps;
 	
 	//progress dlg
 	ProgressDialog pDlg;
 	
-	//ListItems data
-	ArrayList<HashMap<String, String>> placesListItems = new ArrayList<HashMap<String,String>>();
-	
-	//refID of the place..name & area name
-	public String KEY_REFERENCE = "reference";
-	public String KEY_NAME = "name";
-	public String KEY_VICINITY = "vicinity";
-	
 	//next activity intent
-	Intent nextActivity = new Intent(this, ClubItemsPopup.class);
+	Intent nextActivity;
 	
 	//splash vars.
-	private static final int MAX_SPLASH_SECONDS = 2;
+	private static final int MAX_SPLASH_SECONDS = 5;
 	private Dialog splashDialog;
 	
 	//state saver for splash
@@ -71,8 +69,6 @@ public class ReaverendActivity extends FragmentActivity {
 		private boolean showSplashScreen = true;
 		// Other save state info here...
 	}
-	
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,67 +81,95 @@ public class ReaverendActivity extends FragmentActivity {
 				showSplashScreen();
 			}
 			setContentView(R.layout.activity_reaverend);
+			
+			//transitions
+			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+			
+			initializeUI();
+			
 		}else{
 			showSplashScreen();
 			
 			setContentView(R.layout.activity_reaverend);
 			
-			checkNet = new ConnectionDetector(getApplicationContext());
-			
-			//check if net is available
-			isNetAvailable = checkNet.isConnectionEnabled();
-			if(!isNetAvailable){
-				//no net! exit
-				alertDM.showAlertDialog(ReaverendActivity.this, "Internet Connection", "Please connect to working Internet connection", false);
-				return;
-			}
-			
-			//gps obj
-			gps = new GPSTracker(this);
-			
-			//query loc. from gps
-			if(gps.areProvidersAlive()){
-				Log.i(APP_LOG_TAG,"Current Loc: "+gps.getLatitude()+","+gps.getLongitude());
-			}else{
-				//cant get current loc
-				alertDM.showAlertDialog(ReaverendActivity.this, "GPS Information", "Couldn't obtain your location. Please enable GPS", false);
-				return;
-			}
-			
-			//bg asynctask to load gp
-//			new LoadPlaces().execute();
-			
-			//get map handle
-//			gMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.Gmap)).getMap();
-
-			//set marker click events
-			gMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-				
-				@Override
-				public boolean onMarkerClick(Marker marker) {
-					
-					double clickedMarkerLat = marker.getPosition().latitude;
-					double clickedMarkerLng = marker.getPosition().longitude;
-					String clickedClubname = marker.getTitle(); 
-					
-					Log.i(APP_LOG_TAG,"Marker Clicked: "+marker.getTitle()+" Coords: "+clickedMarkerLat+","+clickedMarkerLng);
-					
-					//pass data to another intent
-					
-					nextActivity.putExtra("CLUB_LATITUDE", String.valueOf(clickedMarkerLat));
-					nextActivity.putExtra("CLUB_LONGITUDE", String.valueOf(clickedMarkerLng));
-					nextActivity.putExtra("CLUB_NAME", clickedClubname);
-					
-					startActivity(nextActivity);
-					return true;
-				}
-			});
-			
 			//transitions
 			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-
+			
+			initializeUI();
 		}
 		
+	}
+	
+	//initialize ui stuff
+	public void initializeUI(){
+		//transitions
+		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		
+		checkNet = new ConnectionDetector(getApplicationContext());
+		
+		//check if net is available
+		isNetAvailable = checkNet.isConnectionEnabled();
+		if(!isNetAvailable){
+			//no net! exit
+			alertDM.showAlertDialog(ReaverendActivity.this, "Internet Connection", "Please connect to working Internet connection", false);
+			return;
+		}
+		
+		//check for play services availability
+		isGooglePlayStoreAvailable();
+		
+		//get map handle
+		gMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.Gmap)).getMap();
+		
+		//load markers
+		new LoadMarkers().execute();
+		
+		//position the camera & zoom levels
+		CameraPosition NBICameraPos = new CameraPosition.Builder().target(NBICOORDS).zoom(12).build();
+		gMap.animateCamera(CameraUpdateFactory.newCameraPosition(NBICameraPos));
+		
+		//intent for nextactivity
+		nextActivity = new Intent(this, ClubItemsPopup.class);
+
+		//set info window click events
+		gMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+			
+			@Override
+			public void onInfoWindowClick(Marker marker) {
+				double clickedMarkerLat = marker.getPosition().latitude;
+				double clickedMarkerLng = marker.getPosition().longitude;
+				String clickedClubname = marker.getTitle(); 
+				
+				Log.i(APP_LOG_TAG,"Marker Clicked: "+marker.getTitle()+" Coords: "+clickedMarkerLat+","+clickedMarkerLng);
+				
+				//pass data to another intent
+				
+				nextActivity.putExtra("CLUB_LATITUDE", clickedMarkerLat);
+				nextActivity.putExtra("CLUB_LONGITUDE", clickedMarkerLng);
+				nextActivity.putExtra("CLUB_NAME", clickedClubname);
+				
+				startActivity(nextActivity);
+				
+			}
+		});
+	}
+	
+	
+	//check google play store availability
+	public void isGooglePlayStoreAvailable(){
+		int resCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		if( (resCode ==  ConnectionResult.SERVICE_MISSING) || (resCode == ConnectionResult.SERVICE_DISABLED) || (resCode == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) ){
+			GooglePlayServicesUtil.getErrorDialog(resCode, this, 0, new DialogInterface.OnCancelListener() {
+				
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					Log.i(APP_LOG_TAG,"Google Play services not available! Quiting");
+					finish();
+				}
+			});
+		}else{
+			Log.i(APP_LOG_TAG,"Google Play services available! ");
+		}
 	}
 
 	@Override
@@ -154,7 +178,7 @@ public class ReaverendActivity extends FragmentActivity {
 		//save important data into this object
 		
 		if(splashDialog != null){
-			data.showSplashScreen = true;
+			data.showSplashScreen = false;
 			removeSplashScreen();
 		}
 		return data;
@@ -233,6 +257,10 @@ public class ReaverendActivity extends FragmentActivity {
 	@Override
 	protected void onResume(){
 		super.onResume();
+		
+		//check for play services availability
+		isGooglePlayStoreAvailable();
+		
 		if(!createMapIfNull()){
 			//failed to load map...do something
 			
@@ -241,99 +269,79 @@ public class ReaverendActivity extends FragmentActivity {
 	
 	
 	
-	//background asynctask to load gplaces
-	class LoadPlaces extends AsyncTask<String, String, String>{
+	class LoadMarkers extends AsyncTask<String, String, String>{
 		
-		//show progress dialog
+		//json vars
+		String jsonString="";
+		String parsedJSON="";
+		String sampleClub="";
+		
+		String logging = ""; 
+		
+		boolean marker = true;
+		
+		private JSONParser jsonParser = new JSONParser();
+		
 		@Override
 		protected void onPreExecute(){
 			super.onPreExecute();
 			pDlg = new ProgressDialog(ReaverendActivity.this);
-			pDlg.setMessage(Html.fromHtml("<b>Club Search</b><br/><i>Loading Clubs...</i>"));
+			pDlg.setMessage(Html.fromHtml("<b>Raeverend</b><br/><i>Loading Clubs...</i>"));
 			pDlg.setIndeterminate(true);
 			pDlg.setCancelable(true);
 			pDlg.show();
 			
 		}
 
-		//get clubs...parse json
+		//dl club coords in bg thread
 		@Override
-		protected String doInBackground(String... args) {
-			googlePlaces = new GooglePlaces();
-			
-			try{
-				//separate place types with '|'
-				String types = "cafe|restaurant";
-				
-				//radius..100m
-				double radius = 100;
-				
-				//get nearest clubs
-				nearPlaces = googlePlaces.search(gps.getLatitude(), gps.getLongitude(), radius, types);
-				
-			}catch(Exception e){
-				e.printStackTrace();
-			}
+		protected String doInBackground(String... params) {
+			jsonString = jsonParser.getServerContent("CLUBS_LIST",0.00,0.00);
 			
 			return null;
 		}
 		
-		/*
-		 * dismiss pDlg
-		 * show data on ui using runOnUIThread(new Runnable()) to update ui from bg thread
-		 * 
-		 */
-		
-		@Override
-		protected void onPostExecute(String file_url){
-			//dismiss progdialog
-			pDlg.dismiss();
+		//creates a marker on the map
+		public void createMarker(GoogleMap gMap, double lat, double lng, String name, boolean isSupported){
 			
-			//update ui from bg thread
-			runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					//json response status
-					String status = nearPlaces.status;
-					
-					//check 4 all status
-					if(status.equalsIgnoreCase("OK")){
-						//success: found places & details
-						if(nearPlaces.results != null){
-							//loop thru each place n add 2 hashmap
-							for(Place p : nearPlaces.results){
-								HashMap<String, String> map = new HashMap<String, String>();
-								
-								//place ref. is used to place full details
-								map.put(KEY_REFERENCE, p.reference);
-								
-								//place name
-								map.put(KEY_NAME, p.name);
-								
-								//add hashmap to arraylist
-								placesListItems.add(map);
-							}
-						}
-					}else if(status.equalsIgnoreCase("ZERO_RESULTS")){
-						//no results found
-						alertDM.showAlertDialog(ReaverendActivity.this, "Near clubs", "Sorry no clubs found near you", false);
-					}else if(status.equalsIgnoreCase("UNKOWN_ERROR")){
-						alertDM.showAlertDialog(ReaverendActivity.this, "Near clubs", "Sorry Unknown error occured!", false);
-					}else if(status.equalsIgnoreCase("OVER_QUERY_LIMIT")){
-						alertDM.showAlertDialog(ReaverendActivity.this, "Near clubs", "Sorry Query limit to Google Places API exceed!", false);
-					}else if(status.equalsIgnoreCase("REQUEST_DENIED")){
-						alertDM.showAlertDialog(ReaverendActivity.this, "Near clubs", "Sorry Error occured! Request Denied", false);
-					}else if(status.equalsIgnoreCase("INVALID_REQUEST")){
-						alertDM.showAlertDialog(ReaverendActivity.this, "Near clubs", " Sorry Error occured! Invalid Request!", false);
-					}else{
-						alertDM.showAlertDialog(ReaverendActivity.this, "Near clubs", "Sorry an error occured!", false);
-					}
-					
-				}
-			});
+			//create a marker based on issupported bool.
+			MarkerOptions options = (isSupported) ? new MarkerOptions().position(new LatLng(lat,lng)).title(name).icon(BitmapDescriptorFactory.fromResource(R.drawable.bar_coktail)) :
+				new MarkerOptions().position(new LatLng(lat,lng)).title(name);
+			
+			//add marker to map
+			gMap.addMarker(options);
+			
 		}
 		
-	}
+		//remove pdiag
+		@Override
+		protected void onPostExecute(String result){
+			super.onPostExecute(result);
+			
+			ArrayList<JSONObject> parsedJSON = jsonParser.parseToJSON(jsonString);
+			
 
+			try{
+				//create n add markers
+				for(JSONObject jobj : parsedJSON ){
+					String name = jobj.getString("name");
+					double lat = jobj.getDouble("latitude");
+					double lng = jobj.getDouble("longitude");
+					boolean isSupported = (jobj.getString("isSupported").equalsIgnoreCase("1") ) ? true : false;
+					
+					//log
+					Log.i(APP_LOG_TAG,"Club:"+name+" => "+lat+","+lng+" "+isSupported);
+					
+					//add marker
+					createMarker(gMap, lat, lng, name, isSupported);
+				}
+			}catch(JSONException e){
+				e.printStackTrace();
+			}
+
+			pDlg.dismiss();
+			
+		}
+
+	}
 }

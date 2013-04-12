@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,9 +27,38 @@ public class JSONParser{
 	
 	//app tag for log
 	private String APP_LOG_TAG = "JSONParser";
+	
+	//getclubs URL
+	private String GET_CLUBS_URL = "http://bitcypher.co.ke/raeverend/getClubs.php";
+	private String GET_CLUB_BEER_URL = "http://bitcypher.co.ke/raeverend/getBeers.php";
+	
+	//hashmap
+	public ArrayList<JSONObject> jsonClubList ;
 
+	public JSONParser(){
+		jsonClubList = new ArrayList<JSONObject>();
+	}
+	
 	//dl json file from server
-	public String getServerContent(String url){
+	public String getServerContent(String type, double lat, double lng){
+		
+		//round up coords
+		if(lat != 0.00 && lng != 0.00){
+			lat = new BigDecimal(lat).setScale(6, BigDecimal.ROUND_HALF_UP).doubleValue();
+			lng = new BigDecimal(lng).setScale(6, BigDecimal.ROUND_HALF_UP).doubleValue();
+		}
+		
+		String url="";
+		
+		if(type.equalsIgnoreCase("CLUBS_LIST"))
+			url = this.GET_CLUBS_URL;
+		else if( (type.equalsIgnoreCase("CLUB_BEER_LIST")) ){
+			url = this.GET_CLUB_BEER_URL;
+			url += "?lat="+lat+"&long="+lng;
+			
+			Log.i(APP_LOG_TAG,"Requesting list URL: "+url);
+		}
+		
 		StringBuilder builder = new StringBuilder();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(url);
@@ -58,30 +90,25 @@ public class JSONParser{
 	}
 	
 	//parse the jsonstring
-	public String getClubs(String JSONString){
-		String[] clubTags = {"clubID","latitude","longitude","name","isSupported"};
+	public ArrayList<JSONObject> parseToJSON(String JSONString){
 		
-		//ret. string contains:=> lat,lng|name|issupported#
-		String clubList=null;
-		try{
-			Log.i(APP_LOG_TAG,JSONString);
-			
-			//obtain json objects('{') since theaz no jsonarrays('[') & store in hashmap
-			JSONObject jobj = new JSONObject(JSONString);
-			for(String tag : clubTags){
-				clubList = jobj.getString(tag)+"#";
-				Log.i(APP_LOG_TAG,tag+ ":"+jobj.getString(tag));
+		//input string :=> {"clubID":"6","latitude":"-1.268254","longitude":"36.811464","name":"K1","isSupported":"1"}#{"clubID":"7","latitude":"-1.265435","longitude":"36.804798","name":"Skylux","isSupported":"1"}
+		//item input string => {"beerName":"Tusker","price":"200"}#{"beerName":"Pilsner","price":"180"}#{"beerName":"Guinness","price":"220"}
+		
+		String[] temp = JSONString.split("#");
+		for(String jsonSingleLine : temp ){
+			try{
+				Log.i(APP_LOG_TAG,jsonSingleLine);
+				
+				//obtain json objects('{') since theaz no jsonarrays('[') & store in arraylist
+				jsonClubList.add(new JSONObject(jsonSingleLine));
+				
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 			
-		}catch(Exception e){
-			e.printStackTrace();
 		}
-		return clubList;
-	}
-	
-	
-	//split jsonstrings based on '#'
-	public String[] splitJSONStrings(String jsonString){
-		return jsonString.split("#");
+		
+		return jsonClubList;
 	}
 }
