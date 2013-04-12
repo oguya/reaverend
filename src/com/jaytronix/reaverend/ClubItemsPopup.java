@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 public class ClubItemsPopup extends ListActivity implements OnItemClickListener{
 	
-	String[] listItems = {"Beer","Tots","Spirits","Offers","Events","Rating"};
+	String[] listItems = {"Beer","Tots","Spirits","Offers","Events","Cocktails"};
 	private String APP_LOG_TAG = "ClubItemsPopup";
 	
 	//intent...receive data from previous activity
@@ -75,55 +75,74 @@ public class ClubItemsPopup extends ListActivity implements OnItemClickListener{
 		
 		Intent nextActivity = new Intent(this, ClubItemDetails.class);
 		if(listItems[position].equalsIgnoreCase("Beer")){
-			
-			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
 			//--add payload to the intent...
 			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
-			nextActivity.putExtra("ITEM_NAME", "Beer");
+			nextActivity.putExtra("ITEM_NAME", listItems[position]);
 			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
 			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
 			startActivity(nextActivity);
 			
+			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
+				
 		}else if(listItems[position].equalsIgnoreCase("Wines")){
-			
-			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
 			//--add payload to the intent...
+			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
 			nextActivity.putExtra("ITEM_NAME", listItems[position]);
+			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
+			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
 			startActivity(nextActivity);
 			
+			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
+				
 		}else if(listItems[position].equalsIgnoreCase("Spirits")){
-			
-			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
 			//--add payload to the intent...
+			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
 			nextActivity.putExtra("ITEM_NAME", listItems[position]);
+			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
+			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
 			startActivity(nextActivity);
 			
+			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
+				
 		}else if(listItems[position].equalsIgnoreCase("Tots")){
+			//--add payload to the intent...
+			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
+			nextActivity.putExtra("ITEM_NAME", listItems[position]);
+			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
+			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
+			startActivity(nextActivity);
 			
 			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
-			//--add payload to the intent...
-			nextActivity.putExtra("ITEM_NAME", listItems[position]);
-			startActivity(nextActivity);
+				
 		}else if(listItems[position].equalsIgnoreCase("Offers")){
+			//--add payload to the intent...
+			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
+			nextActivity.putExtra("ITEM_NAME", listItems[position]);
+			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
+			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
+			startActivity(nextActivity);
 			
 			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
-			//--add payload to the intent...
-			nextActivity.putExtra("ITEM_NAME", listItems[position]);
-			startActivity(nextActivity);
 				
 		}else if(listItems[position].equalsIgnoreCase("Events")){
-			
-			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
 			//--add payload to the intent...
+			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
 			nextActivity.putExtra("ITEM_NAME", listItems[position]);
+			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
+			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
 			startActivity(nextActivity);
 			
-		}else if(listItems[position].equalsIgnoreCase("Rating")){
+			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
+			
+		}else if(listItems[position].equalsIgnoreCase("Cocktails")){
+			//--add payload to the intent...
+			nextActivity.putExtra("CLUB_NAME", CLUB_NAME);
+			nextActivity.putExtra("ITEM_NAME", listItems[position]);
+			nextActivity.putExtra("CLUB_LAT", CLUB_LAT);
+			nextActivity.putExtra("CLUB_LONG", CLUB_LONG);
+			startActivity(nextActivity);
 			
 			Log.i(APP_LOG_TAG,"sending data["+listItems[position]+"] via intent to new activity");
-			//--add payload to the intent...
-			nextActivity.putExtra("ITEM_NAME", listItems[position]);
-			startActivity(nextActivity);
 			
 		}
 	}	

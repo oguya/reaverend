@@ -12,6 +12,7 @@ public class CustomPriceListAdapter extends ArrayAdapter<String> {
 
 	private final Activity context;
 	private final String[] beerList, beerPrices;
+	private String type;
 	
 	static class ViewHolder{
 		public TextView itemName;
@@ -24,22 +25,39 @@ public class CustomPriceListAdapter extends ArrayAdapter<String> {
 		this.context = context;
 		this.beerPrices = beerPrices;
 		this.beerList = beerList;
+		this.type = "drinks";
 	}
 
+	//default constructor..eg offers
+	public CustomPriceListAdapter(Activity context, String[] beerList, String[] beerPrices,String type) {
+		super(context, R.layout.offers_row,beerList);
+		this.context = context;
+		this.beerPrices = beerPrices;
+		this.beerList = beerList;
+		this.type = "Offers";
+	}	
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent){
 		View rowView = convertView;
 		
 		if(rowView == null){
 			LayoutInflater inflater = context.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.itemdetails_rowlayout, null);
+			rowView = (type.equals("drinks")) ? inflater.inflate(R.layout.itemdetails_rowlayout, null) : inflater.inflate(R.layout.offers_row, null) ;
 			
 			//--create a view holder
 			ViewHolder viewHolder = new ViewHolder();
 			
 			//---get the references to all the views in the row---
-			viewHolder.itemName = (TextView)rowView.findViewById(R.id.clubItemName);
-			viewHolder.price = (TextView)rowView.findViewById(R.id.clubItemPrice);
+			if(type.equals("drinks")){
+				viewHolder.itemName = (TextView)rowView.findViewById(R.id.clubItemName);
+				viewHolder.price = (TextView)rowView.findViewById(R.id.clubItemPrice);
+				
+			}else if(type.equals("Offers")){
+				viewHolder.itemName = (TextView)rowView.findViewById(R.id.offerName);
+				viewHolder.price = (TextView)rowView.findViewById(R.id.offerDesc);
+				
+			}
 			
 			//---assign the view holder to the rowView---
 			rowView.setTag(viewHolder);

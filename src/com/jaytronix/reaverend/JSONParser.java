@@ -31,6 +31,11 @@ public class JSONParser{
 	//getclubs URL
 	private String GET_CLUBS_URL = "http://bitcypher.co.ke/raeverend/getClubs.php";
 	private String GET_CLUB_BEER_URL = "http://bitcypher.co.ke/raeverend/getBeers.php";
+	private String GET_CLUB_TOTS_URL = "http://bitcypher.co.ke/raeverend/getTots.php";
+	private String GET_CLUB_SPIRITS_URL = "http://bitcypher.co.ke/raeverend/getSpirits.php";
+	private String GET_CLUB_OFFERS_URL = "http://bitcypher.co.ke/raeverend/getOffers.php";
+	private String GET_CLUB_EVENTS_URL = "http://bitcypher.co.ke/raeverend/getEvents.php";
+	private String GET_CLUB_COCKTAILS_URL = "http://bitcypher.co.ke/raeverend/getCocktails.php";
 	
 	//hashmap
 	public ArrayList<JSONObject> jsonClubList ;
@@ -57,6 +62,37 @@ public class JSONParser{
 			url += "?lat="+lat+"&long="+lng;
 			
 			Log.i(APP_LOG_TAG,"Requesting list URL: "+url);
+			
+		}else if(type.equalsIgnoreCase("CLUB_TOTS_LIST") ){
+			url = this.GET_CLUB_TOTS_URL;
+			url += "?lat="+lat+"&long="+lng;
+			
+			Log.i(APP_LOG_TAG,"Requesting list URL: "+url);
+
+		}else if(type.equalsIgnoreCase("CLUB_SPIRITS_LIST") ){
+			url = this.GET_CLUB_SPIRITS_URL;
+			url += "?lat="+lat+"&long="+lng;
+			
+			Log.i(APP_LOG_TAG,"Requesting list URL: "+url);
+
+		}else if(type.equalsIgnoreCase("CLUB_OFFERS_LIST") ){
+			url = this.GET_CLUB_OFFERS_URL;
+			url += "?lat="+lat+"&long="+lng;
+			
+			Log.i(APP_LOG_TAG,"Requesting list URL: "+url);
+
+		}else if(type.equalsIgnoreCase("CLUB_EVENTS_LIST") ){
+			url = this.GET_CLUB_EVENTS_URL;
+			url += "?lat="+lat+"&long="+lng;
+			
+			Log.i(APP_LOG_TAG,"Requesting list URL: "+url);
+
+		}else if(type.equalsIgnoreCase("CLUB_COCKTAILS_LIST") ){
+			url = this.GET_CLUB_COCKTAILS_URL;
+			url += "?lat="+lat+"&long="+lng;
+			
+			Log.i(APP_LOG_TAG,"Requesting list URL: "+url);
+
 		}
 		
 		StringBuilder builder = new StringBuilder();

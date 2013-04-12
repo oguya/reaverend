@@ -156,31 +156,40 @@ containing a value of this type.
     }
     public static final class id {
         public static final int Gmap=0x7f040006;
-        public static final int clubIconListHeader=0x7f04000a;
-        public static final int clubItemName=0x7f040007;
-        public static final int clubItemPrice=0x7f040008;
+        public static final int clubIconListHeader=0x7f04000e;
+        public static final int clubItemName=0x7f04000b;
+        public static final int clubItemPrice=0x7f04000c;
         public static final int clubitemspopuplayout=0x7f040005;
+        public static final int eventDate=0x7f040009;
+        public static final int eventDesc=0x7f04000a;
+        public static final int eventName=0x7f040007;
         public static final int hybrid=0x7f040004;
-        public static final int ic_district=0x7f04000f;
-        public static final int ic_nearby=0x7f04000e;
-        public static final int ic_settings=0x7f040010;
-        public static final int listHeaderCbName=0x7f040009;
-        public static final int listIcon=0x7f04000b;
-        public static final int listItemName=0x7f04000c;
-        public static final int menu_settings=0x7f04000d;
+        public static final int ic_district=0x7f040015;
+        public static final int ic_nearby=0x7f040014;
+        public static final int ic_settings=0x7f040016;
+        public static final int listHeaderCbName=0x7f04000d;
+        public static final int listIcon=0x7f040011;
+        public static final int listItemName=0x7f040012;
+        public static final int menu_settings=0x7f040013;
         public static final int none=0x7f040000;
         public static final int normal=0x7f040001;
+        public static final int offerDesc=0x7f040010;
+        public static final int offerName=0x7f04000f;
         public static final int satellite=0x7f040002;
         public static final int terrain=0x7f040003;
+        public static final int textView2=0x7f040008;
     }
     public static final class layout {
         public static final int activity_clubitemsdetails=0x7f030000;
         public static final int activity_clubitemspopup=0x7f030001;
         public static final int activity_reaverend=0x7f030002;
-        public static final int itemdetails_rowlayout=0x7f030003;
-        public static final int listheader=0x7f030004;
-        public static final int rowlayout=0x7f030005;
-        public static final int splash_layout=0x7f030006;
+        public static final int event_layout=0x7f030003;
+        public static final int events_row=0x7f030004;
+        public static final int itemdetails_rowlayout=0x7f030005;
+        public static final int listheader=0x7f030006;
+        public static final int offers_row=0x7f030007;
+        public static final int rowlayout=0x7f030008;
+        public static final int splash_layout=0x7f030009;
     }
     public static final class menu {
         public static final int activity_reaverend=0x7f070000;

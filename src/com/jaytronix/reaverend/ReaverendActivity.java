@@ -35,6 +35,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class ReaverendActivity extends FragmentActivity {
 	
+	public Handler uiHandler=new Handler();
+	
 	//appname...for debugging & log
 	public String APP_LOG_TAG = "ReaverendActivity";
 	
@@ -66,8 +68,37 @@ public class ReaverendActivity extends FragmentActivity {
 	
 	//state saver for splash
 	private class StateSaver {
-		private boolean showSplashScreen = true;
+		public boolean showSplashScreen = true;
 		// Other save state info here...
+		
+		//appname...for debugging & log
+		public String APP_LOG_TAG;
+		
+		//net connection flag
+		public boolean isNetAvailable;
+		
+		//net connection detection obj.
+		ConnectionDetector checkNet;
+		
+		//googleMap handle
+		private GoogleMap gMap;
+		
+		//nbi latlng
+		private LatLng NBICOORDS;
+		
+		//alert dialog mgr
+		AlertDialogManager alertDM ;
+		
+		
+		//progress dlg
+		ProgressDialog pDlg;
+		
+		//next activity intent
+		Intent nextActivity;
+		
+		//splash vars.
+		private Dialog splashDialog;
+
 	}
 	
 	@Override
@@ -79,29 +110,48 @@ public class ReaverendActivity extends FragmentActivity {
 		if(data != null){
 			if(data.showSplashScreen){
 				showSplashScreen();
+			}else{
+				
+				//appname...for debugging & log
+				this.APP_LOG_TAG = data.APP_LOG_TAG;
+				
+				//net connection flag
+				this.isNetAvailable = data.isNetAvailable;
+				
+				//net connection detection obj.
+				this.checkNet = data.checkNet;
+				
+				//googleMap handle
+				this.gMap = data.gMap;
+				
+				//nbi latlng
+				this.NBICOORDS = data.NBICOORDS;
+				
+				//alert dialog mgr
+				this.alertDM = data.alertDM;
+				
+				
+				//progress dlg
+				this.pDlg = data.pDlg;
+				
+				//next activity intent
+				this.nextActivity = data.nextActivity;
+				
+				this.splashDialog=data.splashDialog;
+				
 			}
-			setContentView(R.layout.activity_reaverend);
-			
-			//transitions
-			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-			
-			initializeUI();
 			
 		}else{
 			showSplashScreen();
 			
-			setContentView(R.layout.activity_reaverend);
-			
-			//transitions
-			overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-			
-			initializeUI();
 		}
 		
 	}
 	
 	//initialize ui stuff
 	public void initializeUI(){
+		setContentView(R.layout.activity_reaverend);
+		
 		//transitions
 		overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 		
@@ -178,14 +228,43 @@ public class ReaverendActivity extends FragmentActivity {
 		//save important data into this object
 		
 		if(splashDialog != null){
-			data.showSplashScreen = false;
+			data.showSplashScreen = true;
 			removeSplashScreen();
+		}else{
+			//appname...for debugging & log
+			data.APP_LOG_TAG = this.APP_LOG_TAG;
+			
+			//net connection flag
+			data.isNetAvailable = this.isNetAvailable;
+			
+			//net connection detection obj.
+			data.checkNet = this.checkNet;
+			
+			//googleMap handle
+			data.gMap = this.gMap;
+			
+			//nbi latlng
+			data.NBICOORDS = this.NBICOORDS;
+			
+			//alert dialog mgr
+			data.alertDM = this.alertDM ;
+			
+			//progress dlg
+			data.pDlg = this.pDlg;
+			
+			//next activity intent
+			data.nextActivity = this.nextActivity;
+			
+			data.splashDialog = this.splashDialog;
+			data.showSplashScreen = false;
+			
 		}
 		return data;
 	}
 	
 	private void removeSplashScreen(){
 		if(splashDialog != null){
+			
 			splashDialog.dismiss();
 			splashDialog = null;
 		}
@@ -200,12 +279,13 @@ public class ReaverendActivity extends FragmentActivity {
 		
 		//bg handler to cancel splash dlg
 		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
+		uiHandler.postDelayed(new Runnable() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				removeSplashScreen();
+				loadUI();
 			}
 		}, MAX_SPLASH_SECONDS * 1000);
 	}
@@ -267,7 +347,9 @@ public class ReaverendActivity extends FragmentActivity {
 		}
 	}
 	
-	
+	public void loadUI(){
+		initializeUI();
+	}
 	
 	class LoadMarkers extends AsyncTask<String, String, String>{
 		
