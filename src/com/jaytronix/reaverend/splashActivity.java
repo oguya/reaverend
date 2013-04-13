@@ -22,8 +22,15 @@ public class splashActivity extends Activity{
 		
 		setContentView(R.layout.splash_layout);
 		
-
-	
+		splashActivity old = (splashActivity)getLastNonConfigurationInstance();
+		
+		if(old != null){
+			ms = old.ms;
+			splashTime = old.splashTime;
+			splashActive = old.splashActive;
+			paused = old.paused;
+		}
+		
 		//create thread to show splash 4 a few sec.
 		Thread newthread = new Thread(new Runnable() {
 			
@@ -36,14 +43,20 @@ public class splashActivity extends Activity{
 							ms += 100;
 						Thread.sleep(100);
 					}
+					startActivity(new Intent(splashActivity.this,ReaverendActivity.class));
 				}catch(Exception e){e.printStackTrace();}
 				
 				finally{
-					startActivity(new Intent(splashActivity.this,ReaverendActivity.class));
+//					startActivity(new Intent(splashActivity.this,ReaverendActivity.class));
 				}
 			}
 		});
 		newthread.start();
+	}
+	
+	@Override
+	public Object onRetainNonConfigurationInstance(){
+		return this;
 	}
 	
 }

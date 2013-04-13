@@ -51,15 +51,15 @@ public class CustomListAdapter extends ArrayAdapter<String>{
 		if(currentItem.equalsIgnoreCase("Beer")){
 			holder.image.setImageResource(R.drawable.beer_mug);
 		}else if(currentItem.equalsIgnoreCase("Tots")){
-			holder.image.setImageResource(R.drawable.wine);
+			holder.image.setImageResource(R.drawable.tot);
 		}else if(currentItem.equalsIgnoreCase("Spirits")){
-			holder.image.setImageResource(R.drawable.wine);
+			holder.image.setImageResource(R.drawable.spirits);
 		}else if(currentItem.equalsIgnoreCase("Offers")){
-			holder.image.setImageResource(R.drawable.wine);
+			holder.image.setImageResource(R.drawable.offers);
 		}else if(currentItem.equalsIgnoreCase("Events")){
-			holder.image.setImageResource(R.drawable.wine);
-		}else if(currentItem.equalsIgnoreCase("Rating")){
-			holder.image.setImageResource(R.drawable.wine);
+			holder.image.setImageResource(R.drawable.events);
+		}else if(currentItem.equalsIgnoreCase("Cocktails")){
+			holder.image.setImageResource(R.drawable.cocktail);
 		}
 		
 		return rowView;

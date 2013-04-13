@@ -1,15 +1,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     
-    <item android:id="@+id/ic_nearby"
-        android:icon="@drawable/ic_gps"
-        android:title="NightClubs Nearby"/>
-    
-    <item android:id="@+id/ic_district"
+    <item android:id="@+id/ic_normal"
         android:icon="@drawable/ic_map"
-        android:title="Wide Area" />
+        android:title="Normal Map"/>
     
-    <item android:id="@+id/ic_settings"
+    <item android:id="@+id/ic_terrain"
         android:icon="@drawable/ic_satellite"
-        android:title="Settings" />
+        android:title="Satellite Map" />
+    
+    <item android:id="@+id/ic_reset"
+        android:icon="@drawable/reset"
+        android:title="Reset" />
+    
+    <item android:id="@+id/ic_help"
+        android:icon="@drawable/help_ic"
+        android:title="Help" />
 
 </menu>

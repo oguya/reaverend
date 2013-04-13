@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">reaverend</string>
+    <string name="app_name">Raeverend</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
 
+    <string name="help1">This icon represents a club. Click on it </string>
+    <string name="help2">An info window with the club will be displayed. Click on it to view more details about the club.</string>
+    <string name="help3">A menu is then displayed...from now on explore</string>
 </resources>

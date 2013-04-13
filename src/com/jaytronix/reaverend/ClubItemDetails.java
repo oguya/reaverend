@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ClubItemDetails extends ListActivity{
@@ -25,6 +27,7 @@ public class ClubItemDetails extends ListActivity{
 	String[] eventDesc;
 	String[] offerList;
 	String[] offerDesc;
+	boolean NULL_JSON=false;
 	
 	//received data from previous intent
 	public double CLUB_LAT = 0.00;
@@ -105,6 +108,7 @@ public class ClubItemDetails extends ListActivity{
 				}
 				
 				String jsonString = jsonParser.getServerContent(itemType, CLUB_LAT, CLUB_LONG);
+				NULL_JSON = (jsonString.equals("")) ? true : false;
 				jsonItems = jsonParser.parseToJSON(jsonString);
 				
 				StringBuilder tempName = new StringBuilder();
@@ -135,6 +139,8 @@ public class ClubItemDetails extends ListActivity{
 				
 				
 				String jsonString = jsonParser.getServerContent("CLUB_OFFERS_LIST", CLUB_LAT, CLUB_LONG);
+				NULL_JSON = (jsonString.equals("")) ? true : false;
+				
 				jsonItems = jsonParser.parseToJSON(jsonString);
 				
 				StringBuilder tempName = new StringBuilder();
@@ -164,6 +170,7 @@ public class ClubItemDetails extends ListActivity{
 				
 			}else if(itemName.equalsIgnoreCase("Events")){
 				String jsonString = jsonParser.getServerContent("CLUB_EVENTS_LIST", CLUB_LAT, CLUB_LONG);
+				NULL_JSON = (jsonString.equals("")) ? true : false;
 				jsonItems = jsonParser.parseToJSON(jsonString);
 				
 				StringBuilder tempName = new StringBuilder();
@@ -206,21 +213,33 @@ public class ClubItemDetails extends ListActivity{
 			if(ITEM_NAME.equalsIgnoreCase("Beer") || ITEM_NAME.equalsIgnoreCase("Tots")  || ITEM_NAME.equalsIgnoreCase("Spirits")
 					|| ITEM_NAME.equalsIgnoreCase("Cocktails") ){
 				
-				ListView lv = getListView();
-				if(ItemList!=null || ItemPrice != null){
+				if(NULL_JSON){
+					TextView noInfotxt= (TextView)findViewById(R.id.noInfo);
+					noInfotxt.setVisibility(View.VISIBLE);
+				}else{
+					ListView lv = getListView();
 					lv.setAdapter(new CustomPriceListAdapter(ClubItemDetails.this, ItemList, ItemPrice));
-				}else
-					Toast.makeText(ClubItemDetails.this, "empty list content", Toast.LENGTH_LONG).show();
+				}
 				
 			}else if(ITEM_NAME.equalsIgnoreCase("Events")){
-				ListView lv = getListView();
-				if(eventName!=null || eventDesc!=null || eventDate !=null ){
+				
+				if(NULL_JSON){
+					TextView noInfotxt= (TextView)findViewById(R.id.noInfo);
+					noInfotxt.setVisibility(View.VISIBLE);
+				}else{
+					ListView lv = getListView();
 					lv.setAdapter(new CustomEventListAdapter(ClubItemDetails.this, eventName, eventDate, eventDesc));
 				}
 				
 			}else if(ITEM_NAME.equalsIgnoreCase("Offers")){
-				ListView lv = getListView();
-				lv.setAdapter(new CustomPriceListAdapter(ClubItemDetails.this, offerList, offerDesc, ""));
+				
+				if(NULL_JSON){
+					TextView noInfotxt= (TextView)findViewById(R.id.noInfo);
+					noInfotxt.setVisibility(View.VISIBLE);
+				}else{
+					ListView lv = getListView();
+					lv.setAdapter(new CustomPriceListAdapter(ClubItemDetails.this, offerList, offerDesc, ""));
+				}
 			}
 			
 			pDlg.dismiss();

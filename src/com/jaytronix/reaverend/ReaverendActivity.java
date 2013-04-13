@@ -154,17 +154,25 @@ public class ReaverendActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
-		case R.id.ic_nearby: 	//--show clubs nearby
-			Toast.makeText(getApplicationContext(), "showing clubs nearby...standby", Toast.LENGTH_LONG).show();
-			
-			startActivity(new Intent(this, ClubItemsPopup.class));
+		case R.id.ic_normal: 	//--show normal map
+			Toast.makeText(getApplicationContext(), "changing map to normal map type", Toast.LENGTH_SHORT).show();
+			gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 			
 			return true;
-		case R.id.ic_district: 	//--widening view..nairobi area
-			Toast.makeText(getApplicationContext(), "showing clubs [wide area]...standby", Toast.LENGTH_LONG).show();
+		case R.id.ic_terrain: 	//--show terrain map
+			Toast.makeText(getApplicationContext(), "changing map to terrain map", Toast.LENGTH_SHORT).show();
+			gMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 			return true;
-		case R.id.ic_settings:
-			Toast.makeText(getApplicationContext(), "showing settings...standby", Toast.LENGTH_LONG).show();
+		case R.id.ic_reset:
+			Toast.makeText(getApplicationContext(), "reseting to Nairobi Area", Toast.LENGTH_SHORT).show();
+			//position the camera & zoom levels
+			CameraPosition NBICameraPos = new CameraPosition.Builder().target(NBICOORDS).zoom(12).build();
+			gMap.animateCamera(CameraUpdateFactory.newCameraPosition(NBICameraPos));
+			return true;
+		case R.id.ic_help:
+			Toast.makeText(getApplicationContext(), "showing help",Toast.LENGTH_SHORT).show();
+			
+			startActivity(new Intent(this,HelpActivity.class));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
