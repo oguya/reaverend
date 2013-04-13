@@ -66,90 +66,11 @@ public class ReaverendActivity extends FragmentActivity {
 	private static final int MAX_SPLASH_SECONDS = 5;
 	private Dialog splashDialog;
 	
-	//state saver for splash
-	private class StateSaver {
-		public boolean showSplashScreen = true;
-		// Other save state info here...
-		
-		//appname...for debugging & log
-		public String APP_LOG_TAG;
-		
-		//net connection flag
-		public boolean isNetAvailable;
-		
-		//net connection detection obj.
-		ConnectionDetector checkNet;
-		
-		//googleMap handle
-		private GoogleMap gMap;
-		
-		//nbi latlng
-		private LatLng NBICOORDS;
-		
-		//alert dialog mgr
-		AlertDialogManager alertDM ;
-		
-		
-		//progress dlg
-		ProgressDialog pDlg;
-		
-		//next activity intent
-		Intent nextActivity;
-		
-		//splash vars.
-		private Dialog splashDialog;
-
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		StateSaver data = (StateSaver)getLastCustomNonConfigurationInstance();
-		
-		if(data != null){
-			if(data.showSplashScreen){
-				showSplashScreen();
-			}else{
-				
-				//appname...for debugging & log
-				this.APP_LOG_TAG = data.APP_LOG_TAG;
-				
-				//net connection flag
-				this.isNetAvailable = data.isNetAvailable;
-				
-				//net connection detection obj.
-				this.checkNet = data.checkNet;
-				
-				//googleMap handle
-				this.gMap = data.gMap;
-				
-				//nbi latlng
-				this.NBICOORDS = data.NBICOORDS;
-				
-				//alert dialog mgr
-				this.alertDM = data.alertDM;
-				
-				
-				//progress dlg
-				this.pDlg = data.pDlg;
-				
-				//next activity intent
-				this.nextActivity = data.nextActivity;
-				
-				this.splashDialog=data.splashDialog;
-				
-			}
-			
-		}else{
-			showSplashScreen();
-			
-		}
-		
-	}
-	
-	//initialize ui stuff
-	public void initializeUI(){
 		setContentView(R.layout.activity_reaverend);
 		
 		//transitions
@@ -202,8 +123,8 @@ public class ReaverendActivity extends FragmentActivity {
 				
 			}
 		});
+
 	}
-	
 	
 	//check google play store availability
 	public void isGooglePlayStoreAvailable(){
@@ -222,74 +143,6 @@ public class ReaverendActivity extends FragmentActivity {
 		}
 	}
 
-	@Override
-	public Object onRetainCustomNonConfigurationInstance(){
-		StateSaver data = new StateSaver();
-		//save important data into this object
-		
-		if(splashDialog != null){
-			data.showSplashScreen = true;
-			removeSplashScreen();
-		}else{
-			//appname...for debugging & log
-			data.APP_LOG_TAG = this.APP_LOG_TAG;
-			
-			//net connection flag
-			data.isNetAvailable = this.isNetAvailable;
-			
-			//net connection detection obj.
-			data.checkNet = this.checkNet;
-			
-			//googleMap handle
-			data.gMap = this.gMap;
-			
-			//nbi latlng
-			data.NBICOORDS = this.NBICOORDS;
-			
-			//alert dialog mgr
-			data.alertDM = this.alertDM ;
-			
-			//progress dlg
-			data.pDlg = this.pDlg;
-			
-			//next activity intent
-			data.nextActivity = this.nextActivity;
-			
-			data.splashDialog = this.splashDialog;
-			data.showSplashScreen = false;
-			
-		}
-		return data;
-	}
-	
-	private void removeSplashScreen(){
-		if(splashDialog != null){
-			
-			splashDialog.dismiss();
-			splashDialog = null;
-		}
-	}
-	
-	private void showSplashScreen(){
-		splashDialog = new Dialog(this);
-		splashDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		splashDialog.setContentView(R.layout.splash_layout);
-		splashDialog.setCancelable(false);
-		splashDialog.show();
-		
-		//bg handler to cancel splash dlg
-		final Handler handler = new Handler();
-		uiHandler.postDelayed(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				removeSplashScreen();
-				loadUI();
-			}
-		}, MAX_SPLASH_SECONDS * 1000);
-	}
-	
 	//--initiate menu.xml
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -345,10 +198,6 @@ public class ReaverendActivity extends FragmentActivity {
 			//failed to load map...do something
 			
 		}
-	}
-	
-	public void loadUI(){
-		initializeUI();
 	}
 	
 	class LoadMarkers extends AsyncTask<String, String, String>{
